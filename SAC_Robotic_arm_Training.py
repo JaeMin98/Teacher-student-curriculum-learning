@@ -16,7 +16,7 @@ import csv
 import wandb
 
 wandb.init(project='Refer3')
-wandb.run.name = 'SAC_Robotic_Arm_Refer3'
+wandb.run.name = 'Algorithm_8'
 wandb.run.save()
 
 def Run_Training():
