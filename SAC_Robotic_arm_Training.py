@@ -49,6 +49,7 @@ def Run_Training():
 
         # 샘플링 알고리즘을 사용하여 다음 작업 선택
         task_id, sampled_reward = memory.sample_task()
+
         env.set_task(task_id)  # 환경에 선택된 작업 설정
         env.reset()
         state = env.get_state()

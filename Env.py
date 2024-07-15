@@ -49,6 +49,8 @@ class Ned2_control(object):
         self.MAX_Level_Of_Point = 4
         self.Level_Of_Point = 0
 
+        self.target = []
+
         Config.Clustering_K = self.MAX_Level_Of_Point+1
 
 
@@ -148,18 +150,6 @@ class Ned2_control(object):
 
     def set_task(self, task_id):
         self.Level_Of_Point = task_id
-        self.target = self.level_point[task_id]
-
-    def ikaction(self):
-        print("hiru")
-        pose_goal = geometry_msgs.msg.Pose()
-        pose_goal.position.x = 0.2
-        pose_goal.position.y = 0.3
-        pose_goal.position.z = 0.4 #static
-
-        self.move_group.set_pose_target(pose_goal)
-        self.move_group.go(wait=True)
-        self.move_group.stop()
             
     def reset(self):
         # print("Go To Home pose")
@@ -167,21 +157,11 @@ class Ned2_control(object):
         self.Negative_DF = 1.01
         self.Positive_DF = 0.99
         self.move_group.go([0,0,0,0,0,0], wait=True)
-        
-        if random.random() < Config.Current_Data_Selection_Ratio:
-            random_index_list = random.choice(range(len(self.level_point[self.Level_Of_Point])))
-            self.target = self.level_point[self.Level_Of_Point][random_index_list]
-            self.target = [float(element) for element in self.target] # 목표 지점 위치
-            self.target_reset()
-        else :
-            temp_range = max(0,self.Level_Of_Point - 1)
-            temp_index = random.randint(0, temp_range)
-            random_index_list = random.choice(range(len(self.level_point[temp_index])))
-            self.target = self.level_point[temp_index][random_index_list]
-            self.target = [float(element) for element in self.target] # 목표 지점 위치
-            self.target_reset()
-        
 
+        random_index_list = random.choice(range(len(self.level_point[self.Level_Of_Point])))
+        self.target = self.level_point[self.Level_Of_Point][random_index_list]
+        self.target = [float(element) for element in self.target] # 목표 지점 위치
+        self.target_reset()
 
     def get_state(self): #joint 6축 각도
         joint = self.move_group.get_current_joint_values()
