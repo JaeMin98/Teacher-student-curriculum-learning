@@ -19,6 +19,13 @@ wandb.init(project='Refer3')
 wandb.run.name = 'Algorithm_8'
 wandb.run.save()
 
+def append_to_csv(file_name, row):
+    with open(file_name, 'a', newline='', encoding='utf-8') as file:
+        writer = csv.writer(file)
+        writer.writerow(row)
+
+selected_level_file_name = 'selected_level.csv'
+
 def Run_Training():
     gc.enable()
     env = Env.Ned2_control()
@@ -116,6 +123,8 @@ def Run_Training():
 
         wandb.log({'Success_rate':success_rate}, step=i_episode)
         wandb.log({'Score':episode_reward}, step=i_episode)
+        wandb.log({'Current_level':env.Level_Of_Point}, step=i_episode)
+        append_to_csv(selected_level_file_name, [env.Level_Of_Point])
 
         print("Current_Level: {}, Episode: {}, total numsteps: {}, episode steps: {}, reward: {}, Replay Memory length: {}".format(env.Level_Of_Point, i_episode, total_numsteps, episode_steps, round(episode_reward, 2), len(memory)))
         gc.collect()

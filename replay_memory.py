@@ -2,7 +2,7 @@ import random
 import numpy as np
 
 class ReplayMemory:
-    def __init__(self, capacity, seed, task_count, buffer_size=10, epsilon=0.1):
+    def __init__(self, capacity, seed, task_count, buffer_size=10, epsilon=0.2):
         random.seed(seed)
         self.capacity = capacity
         self.buffer = []
