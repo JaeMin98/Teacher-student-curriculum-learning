@@ -114,6 +114,7 @@ def Run_Training():
 
                 if moving_avg_sr >= 0.9:
                     memory.done_task.append(i)
+                    memory.done_task = list(set(memory.done_task))
 
         if total_numsteps > Config.num_steps:
             break
