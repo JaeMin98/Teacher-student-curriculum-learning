@@ -34,30 +34,54 @@ class ReplayMemory:
                 self.task_rewards[task_id].pop(0)
         self.previous_scores[task_id] = episode_score
 
+    # def sample_task(self):
+    #     available_tasks = [task for task in range(self.task_count) if task not in self.done_task]
+        
+    #     if not available_tasks:
+    #         return None, None  # 모든 작업이 완료된 경우
+        
+    #     sampled_rewards = {}
+    #     for task_id in available_tasks:
+    #         if len(self.task_rewards[task_id]) > 0:
+    #             sampled_rewards[task_id] = random.choice(self.task_rewards[task_id])
+    #         else:
+    #             sampled_rewards[task_id] = 1  # 기본 보상
+        
+    #     if sampled_rewards:
+    #         selected_task = max(sampled_rewards, key=lambda x: abs(sampled_rewards[x]))
+    #         # Create one-hot distribution
+    #         one_hot_dist = [0] * len(available_tasks)
+    #         one_hot_dist[available_tasks.index(selected_task)] = 1
+    #         # Mix with uniform distribution
+    #         final_dist = [(1 - self.epsilon) * p + self.epsilon / len(available_tasks) for p in one_hot_dist]
+    #         # Sample from the final distribution
+    #         selected_task = random.choices(available_tasks, weights=final_dist)[0]
+    #         return selected_task, sampled_rewards[selected_task]
+    #     else:
+    #         return random.choice(available_tasks), 1
+
     def sample_task(self):
+        if random.random() < self.epsilon:
+            # epsilon 확률로 모든 작업 중에서 무작위 선택
+            return random.choice(range(self.task_count)), 1
+        
+        available_tasks = [task for task in range(self.task_count) if task not in self.done_task]
+        
+        if not available_tasks:
+            return None, None  # 모든 작업이 완료된 경우
+        
         sampled_rewards = {}
-        for task_id in range(self.task_count):
+        for task_id in available_tasks:
             if len(self.task_rewards[task_id]) > 0:
                 sampled_rewards[task_id] = random.choice(self.task_rewards[task_id])
             else:
                 sampled_rewards[task_id] = 1  # 기본 보상
-
+        
         if sampled_rewards:
             selected_task = max(sampled_rewards, key=lambda x: abs(sampled_rewards[x]))
-            
-            # Create one-hot distribution
-            one_hot_dist = [0] * self.task_count
-            one_hot_dist[selected_task] = 1
-            
-            # Mix with uniform distribution
-            final_dist = [(1 - self.epsilon) * p + self.epsilon / self.task_count for p in one_hot_dist]
-            
-            # Sample from the final distribution
-            selected_task = random.choices(range(self.task_count), weights=final_dist)[0]
-            
             return selected_task, sampled_rewards[selected_task]
         else:
-            return random.choice(range(self.task_count)), 1
+            return random.choice(available_tasks), 1
 
     def __len__(self):
         return len(self.buffer)
