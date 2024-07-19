@@ -66,6 +66,7 @@ class ReplayMemory:
             return random.choice(range(self.task_count)), 1
         
         available_tasks = [task for task in range(self.task_count) if task not in self.done_task]
+
         
         if not available_tasks:
             return None, None  # 모든 작업이 완료된 경우
@@ -76,7 +77,9 @@ class ReplayMemory:
                 sampled_rewards[task_id] = random.choice(self.task_rewards[task_id])
             else:
                 sampled_rewards[task_id] = 1  # 기본 보상
-        
+
+        print(self.done_task, sampled_rewards)
+
         if sampled_rewards:
             selected_task = max(sampled_rewards, key=lambda x: abs(sampled_rewards[x]))
             return selected_task, sampled_rewards[selected_task]
